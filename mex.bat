@@ -26,7 +26,10 @@ if "%CI%"=="" (
 @REM install packages from lock file in local virtual environment
 echo installing package
 uv sync
-uv run nodeenv ./mex/editor/client/.nodeenv/ --node=lts
+IF NOT EXIST "./mex/editor/client/.nodeenv/" (
+    uv run nodeenv ./mex/editor/client/.nodeenv/ --node=lts
+)
+./mex/editor/client/.nodeenv/Scripts/activate.bat
 cd ./mex/editor/client
 npm run install --prefix ./mex/editor/client
 exit /b %errorlevel%
