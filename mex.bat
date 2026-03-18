@@ -29,9 +29,9 @@ uv sync
 IF NOT EXIST "./mex/editor/client/.nodeenv/" (
     uv run nodeenv ./mex/editor/client/.nodeenv/ --node=lts
 )
-./mex/editor/client/.nodeenv/Scripts/activate.bat
+call ./mex/editor/client/.nodeenv/Scripts/activate.bat
 cd ./mex/editor/client
-npm run install --prefix ./mex/editor/client
+npm install
 exit /b %errorlevel%
 
 
