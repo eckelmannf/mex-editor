@@ -1,9 +1,7 @@
 import asyncio
-from collections.abc import AsyncGenerator
-import subprocess
-from contextlib import asynccontextmanager
 import sys
-import os
+from collections.abc import AsyncGenerator
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 import uvicorn
@@ -18,11 +16,17 @@ DIST = Path(CLIENT / "dist/mex-editor/browser")
 NODE_MODULES = Path(CLIENT / "node_modules")
 
 
+def ensure_directory(dir: Path | str) -> None:
+    path = Path(dir)
+    if not path.exists():
+        path.mkdir(parents=True, exist_ok=True)
+
+
 # $env:NODE_PATH="./mex/editor/client/node_modules"
 # $env:NPM_CONFIG_PREFIX="./mex/editor/client"
 # $env:Path="./mex/editor/client/node_modules/.bin;$env:Path"
 @asynccontextmanager
-async def dev_lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+async def dev_lifespan(app: FastAPI) -> AsyncGenerator[None]:
     # --- STARTUP ---
     script_path: Path = THIS / "../../activate.ps1"
     powershell_cmd: str = (
@@ -53,6 +57,7 @@ def main() -> None:
 
     app = FastAPI(title="mex-editor", lifespan=dev_lifespan if dev_mode else None)
     app.include_router(data_router, prefix="/api")
+    ensure_directory(DIST)
     app.mount("/", StaticFiles(directory=DIST, html=True), name="static")
 
     uvicorn.run(app, port=8000)

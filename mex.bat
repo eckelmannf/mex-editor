@@ -27,6 +27,8 @@ if "%CI%"=="" (
 echo installing package
 uv sync
 uv run nodeenv ./mex/editor/client/.nodeenv/ --node=lts
+cd ./mex/editor/client
+npm run install --prefix ./mex/editor/client
 exit /b %errorlevel%
 
 
