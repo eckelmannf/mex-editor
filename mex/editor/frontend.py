@@ -23,6 +23,7 @@ def _exec_npm(cmd: str) -> subprocess.CompletedProcess[bytes]:
     env = os.environ.copy()
     env["NODE_PATH"] = str(CLIENT_NODE_MODULES)
     env["NPM_CONFIG_PREFIX"] = str(CLIENT)
+    env["PATH"] = f"{NODE_BIN.as_posix()};{env['PATH']}"
 
     npm_call = os.path.join(NODE_BIN, "node_modules", "npm", "bin", "npm-cli.js")
     cmd_call = f"{NODE_EXEC} {npm_call} {cmd}"
