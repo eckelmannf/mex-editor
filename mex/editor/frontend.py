@@ -54,7 +54,7 @@ async def exec_npm_async(cmd: str) -> AsyncGenerator[asyncio.subprocess.Process]
 
 def install() -> None:
     if (not Path(NODE_VIRTUAL_ENV).exists()) and (
-        code := _exec_cmd("uv run nodeenv {NODE_VIRTUAL_ENV} --node=lts").returncode
+        code := _exec_cmd(f"uv run nodeenv {NODE_VIRTUAL_ENV} --node=lts").returncode
     ):
         sys.exit(code)
 
