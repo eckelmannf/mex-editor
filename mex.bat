@@ -3,6 +3,7 @@
 set target=%1
 
 if "%target%"=="install" goto install
+if "%target%"=="install-frontend" goto install-frontend
 if "%target%"=="lint" goto lint
 if "%target%"=="unit" goto unit
 if "%target%"=="test" goto test
@@ -26,14 +27,13 @@ if "%CI%"=="" (
 @REM install packages from lock file in local virtual environment
 echo installing package
 uv sync
-IF NOT EXIST "./mex/editor/client/.nodeenv/" (
-    uv run nodeenv ./mex/editor/client/.nodeenv/ --node=lts
-)
-call ./mex/editor/client/.nodeenv/Scripts/activate.bat
-cd ./mex/editor/client
-npm install
+uv run install-frontend
 exit /b %errorlevel%
 
+:install-frontend
+echo installing frontend
+uv run install-frontend
+exit /b %errorlevel%
 
 :lint
 @REM run the linter hooks from pre-commit on all files

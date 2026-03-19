@@ -203,7 +203,7 @@
 
 <main class="main">
   <div>
-    <div>DATA: Test</div>
+    <div>DATA: </div>
     @for (item of data$ | async; track item.title) {
     <li><b>{{ item.title }}</b><br>{{ item.text }}</li>
     } @empty {

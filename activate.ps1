@@ -2,4 +2,4 @@
 mex\editor\client\.nodeenv\Scripts\Activate.ps1
 $env:NODE_PATH="./mex/editor/client/node_modules"
 $env:NPM_CONFIG_PREFIX="./mex/editor/client"
-$env:Path="./mex/editor/client/node_modules/.bin;$env:Path"
+$env:PATH="./mex/editor/client/node_modules/.bin;$env:PATH"
