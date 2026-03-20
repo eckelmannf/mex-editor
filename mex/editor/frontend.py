@@ -66,7 +66,7 @@ def install() -> None:
         "nodeenv.exe" if sys.platform == "win32" else "nodeenv"
     )
     if code := _exec_cmd(
-        f"uv run {nodeenv_path.as_posix()} {NODE_VIRTUAL_ENV} --force --node=lts"
+        f"{nodeenv_path.as_posix()} {NODE_VIRTUAL_ENV} --force --node=lts"
     ).returncode:
         sys.exit(code)
 
