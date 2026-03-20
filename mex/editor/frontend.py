@@ -21,7 +21,7 @@ NODE_EXEC = NODE_BIN / ("node.exe" if sys.platform == "win32" else "node")
 def _exec_cmd(cmd: str) -> subprocess.CompletedProcess[bytes]:
     env = os.environ.copy()
     env["PATH"] = f"{VENV_SCRIPTS.as_posix()};{env['PATH']}"
-    return subprocess.run(cmd)
+    return subprocess.run(cmd, env=env)
 
 
 def _exec_npm(cmd: str) -> subprocess.CompletedProcess[bytes]:
@@ -59,9 +59,11 @@ async def exec_npm_async(cmd: str) -> AsyncGenerator[asyncio.subprocess.Process]
 
 
 def install() -> None:
-    if (not Path(NODE_VIRTUAL_ENV).exists()) and (
-        code := _exec_cmd(f"uv run nodeenv {NODE_VIRTUAL_ENV} --node=lts").returncode
-    ):
+    if not Path(NODE_VIRTUAL_ENV).exists():
+        Path(NODE_VIRTUAL_ENV).mkdir()
+    if code := _exec_cmd(
+        f"uv run nodeenv {NODE_VIRTUAL_ENV} --force --node=lts"
+    ).returncode:
         sys.exit(code)
 
     sys.exit(_exec_npm("install").returncode)
