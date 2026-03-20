@@ -65,7 +65,7 @@ def install() -> None:
     nodeenv_path = VENV_SCRIPTS / (
         "nodeenv.exe" if sys.platform == "win32" else "nodeenv"
     )
-    print("VENV_SCRIPTS", VENV_SCRIPTS.exists())
+    print("VENV_SCRIPTS", VENV_SCRIPTS, VENV_SCRIPTS.exists())
     print("NODE_ENV_EXE", nodeenv_path.exists())
     print("NODE_VIRTUAL_ENV", NODE_VIRTUAL_ENV.exists())
 
