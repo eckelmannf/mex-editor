@@ -21,7 +21,7 @@ NODE_EXEC = NODE_BIN / ("node.exe" if sys.platform == "win32" else "node")
 def _exec_cmd(cmd: str) -> subprocess.CompletedProcess[bytes]:
     env = os.environ.copy()
     env["PATH"] = f"{VENV_SCRIPTS.as_posix()};{env['PATH']}"
-    return subprocess.run(cmd, env=env)
+    return subprocess.run(cmd, env=env, check=True)
 
 
 def _exec_npm(cmd: str) -> subprocess.CompletedProcess[bytes]:
