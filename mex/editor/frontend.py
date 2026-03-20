@@ -34,7 +34,7 @@ def _exec_npm(cmd: str) -> subprocess.CompletedProcess[bytes]:
     cmd_call = f"{NODE_EXEC} {npm_call} {cmd}"
 
     print("_exec_npm", cmd_call)
-    return subprocess.run(cmd_call, cwd=CLIENT, env=env)
+    return subprocess.run(cmd_call, cwd=CLIENT, env=env, shell=True)
 
 
 async def exec_npm_async(cmd: str) -> AsyncGenerator[asyncio.subprocess.Process]:
