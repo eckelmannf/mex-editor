@@ -61,8 +61,12 @@ async def exec_npm_async(cmd: str) -> AsyncGenerator[asyncio.subprocess.Process]
 def install() -> None:
     if not Path(NODE_VIRTUAL_ENV).exists():
         Path(NODE_VIRTUAL_ENV).mkdir()
+
+    nodeenv_path = VENV_SCRIPTS / (
+        "nodeenv.exe" if sys.platform == "win32" else "nodeenv"
+    )
     if code := _exec_cmd(
-        f"uv run nodeenv {NODE_VIRTUAL_ENV} --force --node=lts"
+        f"uv run {nodeenv_path.as_posix()} {NODE_VIRTUAL_ENV} --force --node=lts"
     ).returncode:
         sys.exit(code)
 
