@@ -5,17 +5,22 @@ import sys
 from collections.abc import AsyncGenerator
 from pathlib import Path
 
-THIS_DIR = Path(__file__).parent
-CLIENT = Path(THIS_DIR / "client")
-CLIENT_DIST = Path(CLIENT / "dist/mex-editor/browser")
-CLIENT_NODE_MODULES = Path(CLIENT / "node_modules")
-CLIENT_NODE_MODULES_BIN = Path(CLIENT_NODE_MODULES / ".bin")
-NODE_VIRTUAL_ENV = Path(CLIENT / ".nodeenv")
-NODE_BIN = Path(NODE_VIRTUAL_ENV / ("Scripts" if sys.platform == "win32" else "/bin"))
+ROOT_DIR = Path(__file__).parent.parent.parent.resolve()
+THIS_DIR = Path(__file__).parent.resolve()
+VENV = ROOT_DIR / ".venv"
+VENV_SCRIPTS = VENV / "Scripts"
+CLIENT = THIS_DIR / "client"
+CLIENT_DIST = CLIENT / "dist/mex-editor/browser"
+CLIENT_NODE_MODULES = CLIENT / "node_modules"
+CLIENT_NODE_MODULES_BIN = CLIENT_NODE_MODULES / ".bin"
+NODE_VIRTUAL_ENV = CLIENT / ".nodeenv"
+NODE_BIN = NODE_VIRTUAL_ENV / ("Scripts" if sys.platform == "win32" else "/bin")
 NODE_EXEC = NODE_BIN / ("node.exe" if sys.platform == "win32" else "node")
 
 
 def _exec_cmd(cmd: str) -> subprocess.CompletedProcess[bytes]:
+    env = os.environ.copy()
+    env["PATH"] = f"{VENV_SCRIPTS.as_posix()};{env['PATH']}"
     return subprocess.run(cmd)
 
 
