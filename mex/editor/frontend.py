@@ -18,10 +18,12 @@ NODE_BIN = NODE_VIRTUAL_ENV / ("Scripts" if sys.platform == "win32" else "/bin")
 NODE_EXEC = NODE_BIN / ("node.exe" if sys.platform == "win32" else "node")
 
 
-def _exec_cmd(cmd: str, args: list[str]) -> subprocess.CompletedProcess[bytes]:
+def _exec_cmd(cmd: str, args: list[str]) -> subprocess.CompletedProcess[str]:
     env = os.environ.copy()
     env["PATH"] = f"{VENV_SCRIPTS.as_posix()}{os.pathsep}{env['PATH']}"
-    return subprocess.run([cmd, " ".join(args)], env=env, check=True)
+    process = subprocess.run([cmd, " ".join(args)], env=env, check=True, text=True)
+    print("Output:", process.stdout)
+    return process
 
 
 def _exec_npm(cmd: str) -> subprocess.CompletedProcess[bytes]:
@@ -59,8 +61,8 @@ async def exec_npm_async(cmd: str) -> AsyncGenerator[asyncio.subprocess.Process]
 
 
 def install() -> None:
-    if not NODE_VIRTUAL_ENV.exists():
-        NODE_VIRTUAL_ENV.mkdir(parents=True, exist_ok=True)
+    # if not NODE_VIRTUAL_ENV.exists():
+    #     NODE_VIRTUAL_ENV.mkdir(parents=True, exist_ok=True)
 
     # nodeenv_path = VENV_SCRIPTS / (
     #     "nodeenv.exe" if sys.platform == "win32" else "nodeenv"
@@ -75,6 +77,8 @@ def install() -> None:
         "uv", [f"run nodeenv {NODE_VIRTUAL_ENV} --force --node=lts"]
     ).returncode:
         sys.exit(code)
+    
+    print("NODE_VIRTUAL_ENV", NODE_VIRTUAL_ENV.exists())
 
     sys.exit(_exec_npm("install").returncode)
 
