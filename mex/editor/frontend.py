@@ -72,7 +72,7 @@ def install() -> None:
     _exec_cmd("uv", ["--version"])
 
     if code := _exec_cmd(
-        "uv", ["run", "nodeenv {NODE_VIRTUAL_ENV} --force --node=lts"]
+        "uv", [f"run nodeenv {NODE_VIRTUAL_ENV} --force --node=lts"]
     ).returncode:
         sys.exit(code)
 
