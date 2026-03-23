@@ -20,28 +20,28 @@ NODE_EXEC = NODE_BIN / ("node.exe" if sys.platform == "win32" else "node")
 
 def _exec_cmd(cmd: str) -> subprocess.CompletedProcess[bytes]:
     env = os.environ.copy()
-    env["PATH"] = f"{VENV_SCRIPTS.as_posix()};{env['PATH']}"
-    return subprocess.run(cmd, env=env, check=True, shell=True)
+    env["PATH"] = f"{VENV_SCRIPTS.as_posix()}{os.pathsep}{env['PATH']}"
+    return subprocess.run(cmd, env=env, check=True)
 
 
 def _exec_npm(cmd: str) -> subprocess.CompletedProcess[bytes]:
     env = os.environ.copy()
     env["NODE_PATH"] = str(CLIENT_NODE_MODULES)
     env["NPM_CONFIG_PREFIX"] = str(CLIENT)
-    env["PATH"] = f"{NODE_BIN.as_posix()};{env['PATH']}"
+    env["PATH"] = f"{NODE_BIN.as_posix()}{os.pathsep}{env['PATH']}"
 
     npm_call = os.path.join(NODE_BIN, "node_modules", "npm", "bin", "npm-cli.js")
     cmd_call = f"{NODE_EXEC} {npm_call} {cmd}"
 
     print("_exec_npm", cmd_call)
-    return subprocess.run(cmd_call, cwd=CLIENT, env=env, shell=True)
+    return subprocess.run(cmd_call, cwd=CLIENT, env=env)
 
 
 async def exec_npm_async(cmd: str) -> AsyncGenerator[asyncio.subprocess.Process]:
     env = os.environ.copy()
     env["NODE_PATH"] = str(CLIENT_NODE_MODULES)
     env["NPM_CONFIG_PREFIX"] = str(CLIENT)
-    env["PATH"] = f"{NODE_BIN.as_posix()};{env['PATH']}"
+    env["PATH"] = f"{NODE_BIN.as_posix()}{os.pathsep}{env['PATH']}"
 
     npm_call = os.path.join(NODE_BIN, "node_modules", "npm", "bin", "npm-cli.js")
     cmd_call = f"{NODE_EXEC} {npm_call} {cmd}"
