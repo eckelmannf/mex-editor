@@ -12,10 +12,10 @@ VENV_SCRIPTS = VENV / "Scripts"
 CLIENT = THIS_DIR / "client"
 CLIENT_DIST = CLIENT / "dist/mex-editor/browser"
 CLIENT_NODE_MODULES = CLIENT / "node_modules"
-CLIENT_NODE_MODULES_BIN = CLIENT_NODE_MODULES / ".bin"
 NODE_VIRTUAL_ENV = CLIENT / ".nodeenv"
 NODE_BIN_DIR = NODE_VIRTUAL_ENV / ("Scripts" if sys.platform == "win32" else "/bin")
 NODE_BIN = NODE_BIN_DIR / ("node.exe" if sys.platform == "win32" else "node")
+CLIENT_NODE_MODULES_BIN_DIR = CLIENT_NODE_MODULES / ".bin"
 
 
 def _exec_cmd(cmd: str, args: list[str]) -> subprocess.CompletedProcess[bytes]:
@@ -26,17 +26,17 @@ def _exec_cmd(cmd: str, args: list[str]) -> subprocess.CompletedProcess[bytes]:
     return process
 
 
-def _exec_npm(cmd: str) -> subprocess.CompletedProcess[bytes]:
+def _exec_npm(npm_args: list[str]) -> subprocess.CompletedProcess[bytes]:
     env = os.environ.copy()
     env["NODE_PATH"] = str(CLIENT_NODE_MODULES)
     env["NPM_CONFIG_PREFIX"] = str(CLIENT)
     env["PATH"] = f"{NODE_BIN_DIR.as_posix()}{os.pathsep}{env['PATH']}"
 
-    npm_call = os.path.join(NODE_BIN_DIR, "node_modules", "npm", "bin", "npm-cli.js")
-    cmd_call = f"{NODE_BIN} {npm_call} {cmd}"
+    npm_call = NODE_BIN_DIR / "node_modules/npm/bin/npm-cli.js"
+    # cmd_call = f"{NODE_BIN} {npm_call} {cmd}"
 
-    print("_exec_npm", cmd_call)
-    return subprocess.run(cmd_call, cwd=CLIENT, env=env)
+    # print("_exec_npm", cmd_call)
+    return subprocess.run(["node", npm_call, *npm_args], cwd=CLIENT, env=env)
 
 
 async def exec_npm_async(cmd: str) -> AsyncGenerator[asyncio.subprocess.Process]:
@@ -81,8 +81,8 @@ def install() -> None:
     print("NODE_VIRTUAL_ENV", NODE_VIRTUAL_ENV.exists())
     _exec_cmd("tree", [THIS_DIR.as_posix()])
 
-    sys.exit(_exec_npm("install").returncode)
+    sys.exit(_exec_npm(["install"]).returncode)
 
 
 def build() -> None:
-    sys.exit(_exec_npm("run build").returncode)
+    sys.exit(_exec_npm(["run", "build"]).returncode)
