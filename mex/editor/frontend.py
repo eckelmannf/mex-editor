@@ -22,7 +22,6 @@ def _exec_cmd(cmd: str, args: list[str]) -> subprocess.CompletedProcess[bytes]:
     env = os.environ.copy()
     env["PATH"] = f"{VENV_SCRIPTS.as_posix()}{os.pathsep}{env['PATH']}"
     return subprocess.run([cmd, *args], env=env, check=True, shell=True)
-    # return process
 
 
 def _exec_npm(npm_args: list[str]) -> subprocess.CompletedProcess[bytes]:
