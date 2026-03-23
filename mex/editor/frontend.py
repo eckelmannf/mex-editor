@@ -22,7 +22,6 @@ def _exec_cmd(cmd: str, args: list[str]) -> subprocess.CompletedProcess[bytes]:
     env = os.environ.copy()
     env["PATH"] = f"{VENV_SCRIPTS.as_posix()}{os.pathsep}{env['PATH']}"
     process = subprocess.run([cmd, *args], env=env, check=True)
-    # print("Output:", process.stdout)
     return process
 
 
@@ -39,9 +38,6 @@ def _exec_npm(npm_args: list[str]) -> subprocess.CompletedProcess[bytes]:
             str(NODE_BIN_DIR / "node_modules/npm/bin/npm-cli.js"),
         ]
 
-    # cmd_call = f"{NODE_BIN} {npm_call} {cmd}"
-
-    # print("_exec_npm", cmd_call)
     return subprocess.run([*npm_call, *npm_args], cwd=CLIENT, check=True, env=env)
 
 
@@ -51,11 +47,13 @@ async def exec_npm_async(cmd: str) -> AsyncGenerator[asyncio.subprocess.Process]
     env["NPM_CONFIG_PREFIX"] = str(CLIENT)
     env["PATH"] = f"{NODE_BIN_DIR}{os.pathsep}{env['PATH']}"
 
-    # npm_call = os.path.join(NODE_BIN_DIR, "node_modules", "npm", "bin", "npm-cli.js")
-    cmd_call = f"npm {cmd}"
+    npm_call = "npm"
+    if sys.platform == "win32":
+        npm_call = f"{NODE_BIN} {NODE_BIN_DIR / 'node_modules/npm/bin/npm-cli.js'}"
 
-    print("_exec_npm_async", cmd_call)
-    process = await asyncio.create_subprocess_shell(cmd_call, cwd=CLIENT, env=env)
+    process = await asyncio.create_subprocess_shell(
+        f"{npm_call} {cmd}", cwd=CLIENT, env=env
+    )
     yield process
 
     try:
@@ -67,21 +65,16 @@ async def exec_npm_async(cmd: str) -> AsyncGenerator[asyncio.subprocess.Process]
 
 
 def install() -> None:
-    # if not NODE_VIRTUAL_ENV.exists():
-    #     NODE_VIRTUAL_ENV.mkdir(parents=True, exist_ok=True)
-
     print("VENV_SCRIPTS", VENV_SCRIPTS, VENV_SCRIPTS.exists())
     print("NODE_VIRTUAL_ENV", NODE_VIRTUAL_ENV.exists())
     _exec_cmd("uv", ["--version"])
 
-    # if not NODE_VIRTUAL_ENV.exists():
     if code := _exec_cmd(
         "uv", ["run", "nodeenv", f"{NODE_VIRTUAL_ENV}", "--force", "--node=lts"]
     ).returncode:
         sys.exit(code)
 
     print("NODE_VIRTUAL_ENV", NODE_VIRTUAL_ENV.exists())
-    # _exec_cmd("tree", [THIS_DIR.as_posix()])
     _exec_npm(["--version"])
 
     sys.exit(_exec_npm(["install"]).returncode)
