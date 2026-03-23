@@ -39,3 +39,7 @@ _sample_data = [
 @router.get("/sample_data")
 def sample_data() -> list[dict[str, Any]]:
     return _sample_data
+
+@router.get("/hello")
+def hello() -> str:
+    return "Hello from mex-editor API"

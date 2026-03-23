@@ -22,9 +22,12 @@ dev = [
     "pytest-cov>=6",
     "pytest-random-order>=1",
     "pytest-xdist>=3",
-    "pytest>=8",
+    "pytest>=9",
+    "requests>=2.32.5",
     "ruff>=0.15",
     "sphinx>=9",
+    "httpx>=0.28",
+    "types-requests",
 ]
 
 [project.scripts]

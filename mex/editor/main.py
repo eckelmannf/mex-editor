@@ -3,6 +3,7 @@ import sys
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from pathlib import Path
+from typing import Literal
 
 import uvicorn
 from fastapi import FastAPI
@@ -46,15 +47,20 @@ async def dev_lifespan(app: FastAPI) -> AsyncGenerator[None]:
     print("Bereinigung beim Herunterfahren...")
 
 
+def create_fastapi(mode: Literal["dev"] | None = None) -> FastAPI:
+    app = FastAPI(title="mex-editor", lifespan=dev_lifespan if mode == "dev" else None)
+    app.include_router(data_router, prefix="/api")
+
+    if CLIENT_DIST.exists():
+        app.mount("/", StaticFiles(directory=CLIENT_DIST, html=True))
+
+    return app
+
+
 def main() -> None:
     args = sys.argv[1:]
     dev_mode = "--dev" in args
-
-    app = FastAPI(title="mex-editor", lifespan=dev_lifespan if dev_mode else None)
-    app.include_router(data_router, prefix="/api")
-    ensure_directory(CLIENT_DIST)
-    app.mount("/", StaticFiles(directory=CLIENT_DIST, html=True), name="static")
-
+    app = create_fastapi("dev" if dev_mode else None)
     uvicorn.run(app, port=8000)
 
 
