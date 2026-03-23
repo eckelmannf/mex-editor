@@ -32,11 +32,11 @@ def _exec_npm(npm_args: list[str]) -> subprocess.CompletedProcess[bytes]:
     env["NPM_CONFIG_PREFIX"] = str(CLIENT)
     env["PATH"] = f"{NODE_BIN_DIR.as_posix()}{os.pathsep}{env['PATH']}"
 
-    npm_call = NODE_BIN_DIR / "node_modules/npm/bin/npm-cli.js"
+    # npm_call = NODE_BIN_DIR / "node_modules/npm/bin/npm-cli.js"
     # cmd_call = f"{NODE_BIN} {npm_call} {cmd}"
 
     # print("_exec_npm", cmd_call)
-    return subprocess.run(["node", npm_call, *npm_args], cwd=CLIENT, env=env)
+    return subprocess.run(["npm", *npm_args], cwd=CLIENT, env=env)
 
 
 async def exec_npm_async(cmd: str) -> AsyncGenerator[asyncio.subprocess.Process]:
@@ -80,7 +80,8 @@ def install() -> None:
 
     print("NODE_VIRTUAL_ENV", NODE_VIRTUAL_ENV.exists())
     _exec_cmd("tree", [THIS_DIR.as_posix()])
-
+    _exec_npm(["--version"])
+    
     sys.exit(_exec_npm(["install"]).returncode)
 
 
