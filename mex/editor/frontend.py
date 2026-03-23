@@ -18,11 +18,11 @@ NODE_BIN = NODE_VIRTUAL_ENV / ("Scripts" if sys.platform == "win32" else "/bin")
 NODE_EXEC = NODE_BIN / ("node.exe" if sys.platform == "win32" else "node")
 
 
-def _exec_cmd(cmd: str, args: str) -> subprocess.CompletedProcess[str]:
+def _exec_cmd(cmd: str, args: list[str]) -> subprocess.CompletedProcess[bytes]:
     env = os.environ.copy()
     env["PATH"] = f"{VENV_SCRIPTS.as_posix()}{os.pathsep}{env['PATH']}"
-    process = subprocess.run([cmd, args], env=env, check=True, text=True)
-    print("Output:", process.stdout)
+    process = subprocess.run([cmd, *args], env=env, check=True)
+    # print("Output:", process.stdout)
     return process
 
 
@@ -67,14 +67,14 @@ def install() -> None:
     # nodeenv_path = VENV_SCRIPTS / (
     #     "nodeenv.exe" if sys.platform == "win32" else "nodeenv"
     # )
-    _exec_cmd("which", "uv")
+    # _exec_cmd("which", "uv")
     print("VENV_SCRIPTS", VENV_SCRIPTS, VENV_SCRIPTS.exists())
     # print("NODE_ENV_EXE", nodeenv_path.exists())
     print("NODE_VIRTUAL_ENV", NODE_VIRTUAL_ENV.exists())
-    _exec_cmd("uv", "--version")
+    _exec_cmd("uv", ["--version"])
 
     if code := _exec_cmd(
-        "uv", f'run "nodeenv {NODE_VIRTUAL_ENV} --force --node=lts"'
+        "uv", ["run", "nodeenv", f"{NODE_VIRTUAL_ENV}", "--force", "--node=lts"]
     ).returncode:
         sys.exit(code)
 
