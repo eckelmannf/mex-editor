@@ -44,6 +44,27 @@ def _exec_npm(npm_args: list[str]) -> subprocess.CompletedProcess[bytes]:
         cwd=CLIENT,
     )
 
+def _exec_npx(npx_args: list[str]) -> subprocess.CompletedProcess[bytes]:
+    env = os.environ.copy()
+    env["NODE_PATH"] = str(CLIENT_NODE_MODULES)
+    env["NPM_CONFIG_PREFIX"] = str(CLIENT)
+    env["PATH"] = f"{NODE_BIN_DIR}{os.pathsep}{env['PATH']}"
+
+    npx_call = ["npx"]
+    if sys.platform == "win32":
+        npx_call = [
+            f"{NODE_BIN}",
+            str(NODE_BIN_DIR / "node_modules/npm/bin/npx-cli.js"),
+        ]
+
+    return subprocess.run(
+        [*npx_call, *npx_args],
+        check=True,
+        env=env,
+        cwd=CLIENT,
+    )
+
+
 
 async def exec_npm_async(cmd: str) -> AsyncGenerator[asyncio.subprocess.Process]:
     # CHANGE
