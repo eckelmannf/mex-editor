@@ -21,8 +21,8 @@ CLIENT_NODE_MODULES_BIN_DIR = CLIENT_NODE_MODULES / ".bin"
 def _exec_cmd(cmd: str, args: list[str]) -> subprocess.CompletedProcess[bytes]:
     env = os.environ.copy()
     env["PATH"] = f"{VENV_SCRIPTS.as_posix()}{os.pathsep}{env['PATH']}"
-    process = subprocess.run([cmd, *args], env=env, check=True)
-    return process
+    return subprocess.run([cmd, *args], env=env, check=True, shell=True)
+    # return process
 
 
 def _exec_npm(npm_args: list[str]) -> subprocess.CompletedProcess[bytes]:
@@ -38,7 +38,13 @@ def _exec_npm(npm_args: list[str]) -> subprocess.CompletedProcess[bytes]:
             str(NODE_BIN_DIR / "node_modules/npm/bin/npm-cli.js"),
         ]
 
-    return subprocess.run([*npm_call, *npm_args], cwd=CLIENT, check=True, env=env)
+    return subprocess.run(
+        [*npm_call, *npm_args],
+        check=True,
+        env=env,
+        shell=True,
+        cwd=CLIENT,
+    )
 
 
 async def exec_npm_async(cmd: str) -> AsyncGenerator[asyncio.subprocess.Process]:
