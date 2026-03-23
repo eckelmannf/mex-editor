@@ -21,7 +21,7 @@ CLIENT_NODE_MODULES_BIN_DIR = CLIENT_NODE_MODULES / ".bin"
 def _exec_cmd(cmd: str, args: list[str]) -> subprocess.CompletedProcess[bytes]:
     env = os.environ.copy()
     env["PATH"] = f"{VENV_SCRIPTS.as_posix()}{os.pathsep}{env['PATH']}"
-    return subprocess.run([cmd, *args], env=env, check=True, shell=True)
+    return subprocess.run([cmd, *args], env=env, check=True)
 
 
 def _exec_npm(npm_args: list[str]) -> subprocess.CompletedProcess[bytes]:
@@ -41,7 +41,6 @@ def _exec_npm(npm_args: list[str]) -> subprocess.CompletedProcess[bytes]:
         [*npm_call, *npm_args],
         check=True,
         env=env,
-        shell=True,
         cwd=CLIENT,
     )
 
