@@ -98,16 +98,7 @@ components of the MEx project are open-sourced under the same license as well.
 - `editor` starts the editor service
 
 
-## TODO
+## Fragen
 
-### Install
-
-- `uv sync` -> nodeenv
-- `uv run nodeenv ./mex/editor/client/.nodeenv/ --node=lts` -> node im client folder
-
-### Run
-
-- `./mex/editor/client/.nodeenv/Scripts/Activate.ps1` -> nodeenv aktiviert
-- `$env:NODE_PATH="./mex/editor/client/node_modules"`
-- `$env:NPM_CONFIG_PREFIX="./mex/editor/client"`
-- `$env:Path="./mex/editor/client/node_modules/.bin;$env:Path"`
+- Wann wird das frontend gebaut (dist ist nicht gepusht)?
+  - local dev: uv run editor --dev => build auf dateiänderung

@@ -18,6 +18,11 @@ NODE_BIN = NODE_BIN_DIR / ("node.exe" if sys.platform == "win32" else "node")
 CLIENT_NODE_MODULES_BIN_DIR = CLIENT_NODE_MODULES / ".bin"
 
 
+def _exit_if_needed(proc: subprocess.CompletedProcess[bytes]) -> None:
+    if code := proc.returncode:
+        sys.exit(code)
+
+
 def _exec_cmd(cmd: str, args: list[str]) -> subprocess.CompletedProcess[bytes]:
     env = os.environ.copy()
     env["PATH"] = f"{VENV_SCRIPTS.as_posix()}{os.pathsep}{env['PATH']}"
@@ -44,6 +49,7 @@ def _exec_npm(npm_args: list[str]) -> subprocess.CompletedProcess[bytes]:
         cwd=CLIENT,
     )
 
+
 def _exec_npx(npx_args: list[str]) -> subprocess.CompletedProcess[bytes]:
     env = os.environ.copy()
     env["NODE_PATH"] = str(CLIENT_NODE_MODULES)
@@ -63,7 +69,6 @@ def _exec_npx(npx_args: list[str]) -> subprocess.CompletedProcess[bytes]:
         env=env,
         cwd=CLIENT,
     )
-
 
 
 async def exec_npm_async(cmd: str) -> AsyncGenerator[asyncio.subprocess.Process]:
@@ -95,16 +100,21 @@ def install() -> None:
     print("NODE_VIRTUAL_ENV", NODE_VIRTUAL_ENV.exists())
     _exec_cmd("uv", ["--version"])
 
-    if code := _exec_cmd(
-        "uv", ["run", "nodeenv", f"{NODE_VIRTUAL_ENV}", "--force", "--node=lts"]
-    ).returncode:
-        sys.exit(code)
+    _exit_if_needed(
+        _exec_cmd(
+            "uv", ["run", "nodeenv", f"{NODE_VIRTUAL_ENV}", "--force", "--node=lts"]
+        )
+    )
 
     print("NODE_VIRTUAL_ENV", NODE_VIRTUAL_ENV.exists())
     _exec_npm(["--version"])
-
-    sys.exit(_exec_npm(["install"]).returncode)
+    _exit_if_needed(_exec_npm(["install"]))
 
 
 def build() -> None:
-    sys.exit(_exec_npm(["run", "build"]).returncode)
+    _exit_if_needed(_exec_npm(["run", "build"]))
+
+
+def install_and_build() -> None:
+    install()
+    build()

@@ -3,7 +3,6 @@
 set target=%1
 
 if "%target%"=="install" goto install
-if "%target%"=="install-frontend" goto install-frontend
 if "%target%"=="lint" goto lint
 if "%target%"=="unit" goto unit
 if "%target%"=="test" goto test
@@ -27,13 +26,9 @@ if "%CI%"=="" (
 @REM install packages from lock file in local virtual environment
 echo installing package
 uv sync
-uv run install-frontend
+uv run install-and-build-frontend
 exit /b %errorlevel%
 
-:install-frontend
-echo installing frontend
-uv run install-frontend
-exit /b %errorlevel%
 
 :lint
 @REM run the linter hooks from pre-commit on all files
