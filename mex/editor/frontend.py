@@ -65,10 +65,11 @@ def install() -> None:
     # nodeenv_path = VENV_SCRIPTS / (
     #     "nodeenv.exe" if sys.platform == "win32" else "nodeenv"
     # )
-    _exec_cmd("uv --version")
+    _exec_cmd("which uv")
     print("VENV_SCRIPTS", VENV_SCRIPTS, VENV_SCRIPTS.exists())
     # print("NODE_ENV_EXE", nodeenv_path.exists())
     print("NODE_VIRTUAL_ENV", NODE_VIRTUAL_ENV.exists())
+    _exec_cmd("uv --version")
     
     if code := _exec_cmd(
         f"uv run nodeenv {NODE_VIRTUAL_ENV} --force --node=lts"
