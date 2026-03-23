@@ -42,6 +42,7 @@ def _exec_npm(npm_args: list[str]) -> subprocess.CompletedProcess[bytes]:
 
 
 async def exec_npm_async(cmd: str) -> AsyncGenerator[asyncio.subprocess.Process]:
+    # CHANGE
     env = os.environ.copy()
     env["NODE_PATH"] = str(CLIENT_NODE_MODULES)
     env["NPM_CONFIG_PREFIX"] = str(CLIENT)
