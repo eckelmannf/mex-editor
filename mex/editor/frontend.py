@@ -30,23 +30,25 @@ def _exec_npm(npm_args: list[str]) -> subprocess.CompletedProcess[bytes]:
     env = os.environ.copy()
     env["NODE_PATH"] = str(CLIENT_NODE_MODULES)
     env["NPM_CONFIG_PREFIX"] = str(CLIENT)
-    env["PATH"] = f"{NODE_BIN_DIR.as_posix()}{os.pathsep}{env['PATH']}"
+    env["PATH"] = f"{NODE_BIN_DIR}{os.pathsep}{env['PATH']}"
 
-    # npm_call = NODE_BIN_DIR / "node_modules/npm/bin/npm-cli.js"
+    npm_call = NODE_BIN_DIR / "node_modules/npm/bin/npm-cli.js"
     # cmd_call = f"{NODE_BIN} {npm_call} {cmd}"
 
     # print("_exec_npm", cmd_call)
-    return subprocess.run(["npm", *npm_args], cwd=CLIENT, env=env)
+    return subprocess.run(
+        [NODE_BIN, npm_call, *npm_args], cwd=CLIENT, check=True, env=env
+    )
 
 
 async def exec_npm_async(cmd: str) -> AsyncGenerator[asyncio.subprocess.Process]:
     env = os.environ.copy()
     env["NODE_PATH"] = str(CLIENT_NODE_MODULES)
     env["NPM_CONFIG_PREFIX"] = str(CLIENT)
-    env["PATH"] = f"{NODE_BIN_DIR.as_posix()}{os.pathsep}{env['PATH']}"
+    env["PATH"] = f"{NODE_BIN_DIR}{os.pathsep}{env['PATH']}"
 
-    npm_call = os.path.join(NODE_BIN_DIR, "node_modules", "npm", "bin", "npm-cli.js")
-    cmd_call = f"{NODE_BIN} {npm_call} {cmd}"
+    # npm_call = os.path.join(NODE_BIN_DIR, "node_modules", "npm", "bin", "npm-cli.js")
+    cmd_call = f"npm {cmd}"
 
     print("_exec_npm_async", cmd_call)
     process = await asyncio.create_subprocess_shell(cmd_call, cwd=CLIENT, env=env)
@@ -64,24 +66,20 @@ def install() -> None:
     # if not NODE_VIRTUAL_ENV.exists():
     #     NODE_VIRTUAL_ENV.mkdir(parents=True, exist_ok=True)
 
-    # nodeenv_path = VENV_SCRIPTS / (
-    #     "nodeenv.exe" if sys.platform == "win32" else "nodeenv"
-    # )
-    # _exec_cmd("which", "uv")
     print("VENV_SCRIPTS", VENV_SCRIPTS, VENV_SCRIPTS.exists())
-    # print("NODE_ENV_EXE", nodeenv_path.exists())
     print("NODE_VIRTUAL_ENV", NODE_VIRTUAL_ENV.exists())
     _exec_cmd("uv", ["--version"])
 
-    if code := _exec_cmd(
-        "uv", ["run", "nodeenv", f"{NODE_VIRTUAL_ENV}", "--force", "--node=lts"]
-    ).returncode:
-        sys.exit(code)
+    if not NODE_VIRTUAL_ENV.exists():
+        if code := _exec_cmd(
+            "uv", ["run", "nodeenv", f"{NODE_VIRTUAL_ENV}", "--force", "--node=lts"]
+        ).returncode:
+            sys.exit(code)
 
     print("NODE_VIRTUAL_ENV", NODE_VIRTUAL_ENV.exists())
-    _exec_cmd("tree", [THIS_DIR.as_posix()])
+    # _exec_cmd("tree", [THIS_DIR.as_posix()])
     _exec_npm(["--version"])
-    
+
     sys.exit(_exec_npm(["install"]).returncode)
 
 
