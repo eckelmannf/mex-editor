@@ -12,6 +12,7 @@ dependencies = [
     "mex-common>=1.17,<1.18",
     "fastapi>=0.135.1,<0.136",
     "uvicorn>=0.42.0",
+    "click>=8.3.1",
 ]
 
 [dependency-groups]
@@ -36,6 +37,7 @@ install-frontend = "mex.editor.frontend:install"
 build-frontend = "mex.editor.frontend:build"
 install-and-build-frontend = "mex.editor.frontend:install_and_build"
 test-frontend = "mex.editor.frontend:test"
+test-lala = "mex.editor.othername_test:main"
 
 [tool.cruft]
 template = "https://github.com/robert-koch-institut/mex-template"

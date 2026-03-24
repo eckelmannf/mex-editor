@@ -48,6 +48,7 @@ exit /b %errorlevel%
 @REM run the unit and integration test suites
 echo running all tests
 uv run pytest --numprocesses=auto --dist=worksteal
+uv run editor --startup=api
 uv run test-frontend
 exit /b %errorlevel%
 

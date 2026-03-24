@@ -1,4 +1,5 @@
 import asyncio
+import click
 import sys
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
@@ -47,22 +48,41 @@ async def dev_lifespan(app: FastAPI) -> AsyncGenerator[None]:
     print("Bereinigung beim Herunterfahren...")
 
 
-def create_fastapi(mode: Literal["dev"] | None = None) -> FastAPI:
+def create_fastapi(
+    mode: Literal["dev"] | None = None,
+    startup: Literal["api", "frontend", "both"] = "both",
+) -> FastAPI:
     app = FastAPI(title="mex-editor", lifespan=dev_lifespan if mode == "dev" else None)
-    app.include_router(data_router, prefix="/api")
+    if startup in ["api", "both"]:
+        app.include_router(data_router, prefix="/api")
 
-    if CLIENT_DIST.exists():
+    if CLIENT_DIST.exists() and startup in ["frontend", "both"]:
         app.mount("/", StaticFiles(directory=CLIENT_DIST, html=True))
 
     return app
 
 
-def main() -> None:
-    args = sys.argv[1:]
-    dev_mode = "--dev" in args
-    app = create_fastapi("dev" if dev_mode else None)
+@click.command()
+@click.option(
+    "--startup",
+    type=click.Choice(["api", "frontend", "both"]),
+    default="both",
+    help="Define what should start 'api', 'frontend' or 'both'.",
+)
+@click.option(
+    "--dev",
+    "-d",
+    is_flag=True,
+    default=False,
+    help="Define if started in dev mode to watch angular src and rebuild on change.",
+)
+def main(
+    startup: Literal["api", "frontend", "both"] = "both", dev: bool = False
+) -> None:
+    app = create_fastapi("dev" if dev else None, startup)
     uvicorn.run(app, port=8000)
 
 
+print("MAIN.py :: CURRENT __name__ is", __name__)
 if __name__ == "__main__":
     main()

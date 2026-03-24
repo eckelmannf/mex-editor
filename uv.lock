@@ -496,6 +496,7 @@ name = "mex-editor"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "click" },
     { name = "fastapi" },
     { name = "mex-common" },
     { name = "uvicorn" },
@@ -519,6 +520,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "click", specifier = ">=8.3.1" },
     { name = "fastapi", specifier = ">=0.135.1,<0.136" },
     { name = "mex-common", specifier = ">=1.17,<1.18" },
     { name = "uvicorn", specifier = ">=0.42.0" },
