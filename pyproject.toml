@@ -35,6 +35,7 @@ editor = "mex.editor.main:main"
 install-frontend = "mex.editor.frontend:install"
 build-frontend = "mex.editor.frontend:build"
 install-and-build-frontend = "mex.editor.frontend:install_and_build"
+test-frontend = "mex.editor.frontend:test"
 
 [tool.cruft]
 template = "https://github.com/robert-koch-institut/mex-template"

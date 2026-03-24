@@ -35,6 +35,7 @@ test:
 	# run the unit and integration test suites
 	@ echo running all tests; \
 	uv run pytest --numprocesses=auto --dist=worksteal; \
+	uv run test-frontend; \
 
 wheel:
 	# build the python package

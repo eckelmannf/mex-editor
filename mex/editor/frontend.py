@@ -95,6 +95,10 @@ async def exec_npm_async(cmd: str) -> AsyncGenerator[asyncio.subprocess.Process]
             await process.wait()
 
 
+def test() -> None:
+    _exit_if_needed(_exec_npm(["run", "test"]))
+
+
 def install() -> None:
     print("VENV_SCRIPTS", VENV_SCRIPTS, VENV_SCRIPTS.exists())
     print("NODE_VIRTUAL_ENV", NODE_VIRTUAL_ENV.exists())
