@@ -4,6 +4,7 @@ import subprocess
 import sys
 from collections.abc import AsyncGenerator
 from pathlib import Path
+from subprocess import Popen, PIPE, STDOUT
 
 ROOT_DIR = Path(__file__).parent.parent.parent.resolve()
 THIS_DIR = Path(__file__).parent.resolve()
@@ -29,7 +30,7 @@ def _exec_cmd(cmd: str, args: list[str]) -> subprocess.CompletedProcess[bytes]:
     return subprocess.run([cmd, *args], env=env, check=True)
 
 
-def _exec_npm(npm_args: list[str]) -> subprocess.CompletedProcess[bytes]:
+def _exec_npm(npm_args: list[str]) -> subprocess.CompletedProcess[str]:
     env = os.environ.copy()
     env["NODE_PATH"] = str(CLIENT_NODE_MODULES)
     env["NPM_CONFIG_PREFIX"] = str(CLIENT)
@@ -47,6 +48,10 @@ def _exec_npm(npm_args: list[str]) -> subprocess.CompletedProcess[bytes]:
         check=True,
         env=env,
         cwd=CLIENT,
+        text=True,
+        stdout=PIPE,
+        stdin=PIPE,
+        stderr=PIPE,
     )
 
 

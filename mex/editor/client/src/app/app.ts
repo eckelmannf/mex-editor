@@ -19,5 +19,5 @@ export class App {
 
   private http = inject(HttpClient)
 
-  data$ = this.http.get<SampleData[]>("/api/sample_data")
+  data$ = this.http.get<SampleData[]>("http://127.0.0.1:8000/api/sample_data")
 }
